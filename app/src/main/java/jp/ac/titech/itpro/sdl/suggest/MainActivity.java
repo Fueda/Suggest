@@ -2,8 +2,7 @@ package jp.ac.titech.itpro.sdl.suggest;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +16,7 @@ import android.widget.ListView;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String queryText = queryInput.getText().toString().trim();
                 if (queryText.length() > 0)
-                    new SuggestThread(queryText).start();
+                    new SuggestTask(MainActivity.this).execute(queryText);
             }
         });
         ListView resultList = findViewById(R.id.result_list);
@@ -61,39 +61,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private final static int MSG_RESULT = 1234;
+    public void showResult(List<String> result) {
+        resultAdapter.clear();
+        resultAdapter.addAll(result);
+        resultAdapter.notifyDataSetChanged();
+        queryInput.selectAll();
+    }
 
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        @SuppressWarnings("unchecked")
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_RESULT:
-                resultAdapter.clear();
-                resultAdapter.addAll((List<String>)msg.obj);
-                resultAdapter.notifyDataSetChanged();
-                queryInput.selectAll();
-                break;
-            }
-            return false;
-        }
-    });
+    private static class SuggestTask extends AsyncTask<String, Void, List<String>> {
 
-    private class SuggestThread extends Thread {
-        private String queryText;
+        private WeakReference<MainActivity> activityRef;
+        private final String suggest_url;
+        private final String result_no_suggestions;
 
-        SuggestThread(String queryText) {
-            this.queryText = queryText;
+        SuggestTask(MainActivity activity) {
+            activityRef = new WeakReference<>(activity);
+            suggest_url = activity.getResources().getString(R.string.suggest_url);
+            result_no_suggestions = activity.getResources().getString(R.string.result_no_suggestions);
         }
 
         @Override
-        public void run() {
-            ArrayList<String> result = new ArrayList<>();
+        protected List<String> doInBackground(String... strings) {
+            List<String> result = new ArrayList<>();
             HttpURLConnection conn = null;
             String error = null;
             try {
-                String query = URLEncoder.encode(queryText, "UTF-8");
-                URL url = new URL(getString(R.string.suggest_url_format, query));
+                String query = URLEncoder.encode(strings[0], "UTF-8");
+                URL url = new URL(suggest_url + query);
                 conn = (HttpURLConnection)url.openConnection();
                 conn.setConnectTimeout(10000);
                 conn.setDoInput(true);
@@ -121,8 +115,16 @@ public class MainActivity extends AppCompatActivity {
                 result.add(error);
             }
             if (result.size() == 0)
-                result.add(getString(R.string.result_no_suggestions));
-            handler.sendMessage(handler.obtainMessage(MSG_RESULT, result));
+                result.add(result_no_suggestions);
+            return result;
         }
+
+        @Override
+        protected void onPostExecute(List<String> result) {
+            MainActivity activity = activityRef.get();
+            if (activity == null || activity.isFinishing())
+                return;
+            activity.showResult(result);
+       }
     }
 }
