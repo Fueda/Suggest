@@ -71,39 +71,29 @@ public class MainActivity extends AppCompatActivity {
 
     private final static int MSG_RESULT = 1234;
 
+
     private static class SuggestHandler extends Handler {
         private WeakReference<MainActivity> activityRef;
+
         SuggestHandler(MainActivity activity) {
             activityRef = new WeakReference<>(activity);
         }
+
         @Override
         @SuppressWarnings("unchecked")
         public void handleMessage(Message msg) {
             MainActivity activity = activityRef.get();
             if (activity == null || activity.isFinishing())
                 return;
-            activity.showResult((List<String>)msg.obj);
-        }
-    }
-    private SuggestHandler handler = new SuggestHandler(this);
-
-    /*
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        @SuppressWarnings("unchecked")
-        public boolean handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_RESULT:
-                resultAdapter.clear();
-                resultAdapter.addAll((List<String>)msg.obj);
-                resultAdapter.notifyDataSetChanged();
-                queryInput.selectAll();
+                activity.showResult((List<String>)msg.obj);
                 break;
             }
-            return false;
         }
-    });
-    */
+    }
+
+    private SuggestHandler handler = new SuggestHandler(this);
 
     private static class SuggestThread extends Thread {
         private String queryText;
