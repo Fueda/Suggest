@@ -3,5 +3,5 @@
     <string name="query_input_hint">query text</string>
     <string name="suggest_button_label">Suggest</string>
     <string name="result_no_suggestions">No suggestions</string>
-    <string name="suggest_url_format">http://google.com/complete/search?hl=ja&amp;ie=utf_8&amp;oe=utf_8&amp;output=toolbar&amp;q=%s</string>
+    <string name="suggest_url">http://google.com/complete/search?hl=ja&amp;ie=utf_8&amp;oe=utf_8&amp;output=toolbar&amp;q=</string>
 </resources>

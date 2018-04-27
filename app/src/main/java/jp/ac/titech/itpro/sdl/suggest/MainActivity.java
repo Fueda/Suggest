@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             String error = null;
             try {
                 String query = URLEncoder.encode(queryText, "UTF-8");
-                URL url = new URL(getString(R.string.suggest_url_format, query));
+                URL url = new URL(getString(R.string.suggest_url) + query);
                 conn = (HttpURLConnection)url.openConnection();
                 conn.setConnectTimeout(10000);
                 conn.setDoInput(true);
