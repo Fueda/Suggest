@@ -2,4 +2,5 @@
 <resources>
     <dimen name="keyword_input_text_size">24sp</dimen>
     <dimen name="button_label_text_size">24sp</dimen>
+    <dimen name="widget_default_margin">8dp</dimen>
 </resources>

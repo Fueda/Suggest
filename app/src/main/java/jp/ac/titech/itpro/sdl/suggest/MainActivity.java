@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
 
-        queryInput = findViewById(R.id.keyword_input);
+        queryInput = findViewById(R.id.query_input);
         Button suggestButton = findViewById(R.id.suggest_button);
         suggestButton.setOnClickListener(new View.OnClickListener() {
             @Override
