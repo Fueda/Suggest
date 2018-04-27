@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Suggest</string>
+    <string name="keyword_input_hint">keyword</string>
+    <string name="suggest_button_label">Suggest</string>
+    <string name="result_no_suggestions">No suggestions</string>
+    <string name="suggest_url_format">http://google.com/complete/search?hl=ja&amp;ie=utf_8&amp;oe=utf_8&amp;output=toolbar&amp;q=%s</string>
 </resources>
